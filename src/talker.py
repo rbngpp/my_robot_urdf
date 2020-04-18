@@ -1,60 +1,47 @@
 #!/usr/bin/env python
-# Software License Agreement (BSD License)
-#
-# Copyright (c) 2016, Kentaro Wada.
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-#
-#  * Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-#  * Redistributions in binary form must reproduce the above
-#    copyright notice, this list of conditions and the following
-#    disclaimer in the documentation and/or other materials provided
-#    with the distribution.
-#  * Neither the name of Willow Garage, Inc. nor the names of its
-#    contributors may be used to endorse or promote products derived
-#    from this software without specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-# "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-# BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-# ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
-## Timer-based talker demo that published std_msgs/Strings messages
-## to the 'chatter' topic.
 
 import rospy
 from geometry_msgs.msg import Twist
+from sys import exit
+import readchar
 
 
-def publish_callback(event):
+
+def publish_callback(msg):
+    rospy.loginfo(msg)
+    pub.publish(msg)
+
+def inserimento(comando,msg):
+    if comando ==('w'):
+        msg.linear.x = msg.linear.x + 0.1
+    elif comando == ('a'):
+        msg.angular.z = msg.angular.z - 0.1
+    elif comando == ('s'):
+        msg.linear.x = msg.linear.x - 0.1
+    elif comando == ('d'):
+        msg.angular.z = msg.angular.z + 0.1
+    else:
+        exit()
+    return msg
+
+
+if __name__ == '__main__':
+    print('Input W-A-S-D per il controllo del robot:\n')
     msg = Twist()
-    msg.linear.x = 1.0
+    msg.linear.x = 0.0
     msg.linear.y = 0.0
     msg.linear.z = 0.0
     msg.angular.x = 0.0
     msg.angular.y = 0.0
     msg.angular.z = 0.0
-    rospy.loginfo(msg)
-    pub.publish(msg)
-
-
-if __name__ == '__main__':
-    try:
+    while True:
         rospy.init_node('talker', anonymous=True)
         pub = rospy.Publisher('/r2d2_diff_drive_controller/cmd_vel', Twist, queue_size=10)
-        timer = rospy.Timer(rospy.Duration(1. / 10), publish_callback)  # 10Hz
-        rospy.spin()
-    except rospy.ROSInterruptException:
-        pass
+        #timer = rospy.Timer(rospy.Duration(1. / 10), publish_callback(msg))  # 10Hz
+        publish_callback(msg)
+        #rospy.spin()
+        #comando = raw_input('Input W-A-S-D per il controllo del robot:\n')
+        comando = readchar.readchar()
+        msg = inserimento(comando,msg)
+    #except rospy.ROSInterruptException:
+     #   pass
