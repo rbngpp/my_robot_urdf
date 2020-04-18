@@ -3,6 +3,7 @@
 <robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro"> 
   <xacro:include filename="$(find my_robot_urdf)/urdf/cylinder_wheel.urdf.xacro"/>
   <xacro:include filename="$(find my_robot_urdf)/urdf/caster_wheel.urdf.xacro"/>
+  <xacro:include filename="$(find my_robot_urdf)/urdf/visual_sensor.xacro"/>
 
   <link name="base_link">
     <visual>
@@ -23,6 +24,9 @@
   <caster_wheel fb="caster" lr="back" assex="0.02" parent="base_link" originx="-0.135" originz="0.009"/>
   <cylinder_wheel fb="front" lr="right" parent="base_link" translateX="0" translateY="0.5" flipY="1"/>
   <cylinder_wheel fb="front" lr="left" parent="base_link" translateX="0" translateY="-0.5" flipY="1"/>
+  
+  <hokuyo base_radius="${base_radius}" base_height="${base_height}"/>
+
 
   <gazebo>
     <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
