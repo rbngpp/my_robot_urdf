@@ -13,4 +13,12 @@ catkin_make
 roscd my_robot_urdf
 roslaunch my_robot_urdf display_x.launch model:=urdf/my_robot_x.urdf
 ```
+In a second terminal window do:
+```
+roscd my_robot_urdf
+cd src
+sudo chmod +x talker.py
+cd ..
+rosrun my_robot_urdf talker.py
+```
 
