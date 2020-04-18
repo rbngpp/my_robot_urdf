@@ -35,19 +35,25 @@
 ## to the 'chatter' topic.
 
 import rospy
-from std_msgs.msg import String
+from geometry_msgs.msg import Twist
 
 
 def publish_callback(event):
-    hello_str = "hello world %s" % event.current_real.to_sec()
-    rospy.loginfo(hello_str)
-    pub.publish(hello_str)
+    msg = Twist()
+    msg.linear.x = 1.0
+    msg.linear.y = 0.0
+    msg.linear.z = 0.0
+    msg.angular.x = 0.0
+    msg.angular.y = 0.0
+    msg.angular.z = 0.0
+    rospy.loginfo(msg)
+    pub.publish(msg)
 
 
 if __name__ == '__main__':
     try:
         rospy.init_node('talker', anonymous=True)
-        pub = rospy.Publisher('chatter', String, queue_size=10)
+        pub = rospy.Publisher('/r2d2_diff_drive_controller/cmd_vel', Twist, queue_size=10)
         timer = rospy.Timer(rospy.Duration(1. / 10), publish_callback)  # 10Hz
         rospy.spin()
     except rospy.ROSInterruptException:
